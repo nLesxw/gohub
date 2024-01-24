@@ -82,14 +82,11 @@ func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 
 // getLogWriter 日志记录介质。GoHub 中使用了两种介质，os.Stdout 和文件
 func getLogWriter(filename string, maxSize, maxBackup, maxAge int, compress bool, logType string) zapcore.WriteSyncer {
-	fmt.Println(filename)
-	fmt.Println(logType)
 	// 如果配置了按照日期记录日志文件
 	if logType == "daily" {
 		logname := time.Now().Format("2006-01-02.log")
 		filename = strings.ReplaceAll(filename, "logs.go", logname) 
 	}
-	fmt.Println(filename)
 	// 滚动日志，详见 config/log.go
 	lumberJackLogger := &lumberjack.Logger{
 		Filename: filename,
