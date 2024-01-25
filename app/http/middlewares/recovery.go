@@ -41,8 +41,8 @@ func Recovery() gin.HandlerFunc {
 						zap.Any("error", err),
 						zap.String("request", string(httpRequest)),
 					)
-					c.Error(err.(error))
-					c.Abort()
+					c.Error(err.(error))  //将异常作为错误对象存储在 Gin 上下文中，以便后续处理
+					c.Abort()  //中止请求链，停止后续的中间件和路由处理函数执行
 					// 链接已断开，无法写状态码
 					return
 				}
@@ -56,11 +56,12 @@ func Recovery() gin.HandlerFunc {
 				)
 
 				// 返回 500 状态码
+				//中止请求链，返回一个 HTTP 500 状态码和一个 JSON 格式的错误消息
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 					"message": "服务器内部错误，请稍后再试",
 				})
 			}
 		}()
-		c.Next()
+		c.Next()  //用于调用下一个中间件或路由处理函数
 	}
 }
